@@ -1,0 +1,24 @@
+﻿@model IEnumerable<StudentManagementSystem.Models.Department>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Department Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.DepartmentName</td>
+                <td>
+                    <a asp-action="Create" class="btn btn-primary">Create New Department</a>
+                    <br /><br />
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

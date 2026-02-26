@@ -1,0 +1,49 @@
+﻿@model StudentManagementSystem.Models.Department
+
+<div class="container mt-5">
+    <div class="card shadow border-0 rounded-4">
+
+        <div class="card-header bg-danger text-white">
+            <h4>Delete Student</h4>
+        </div>
+
+        <div class="card-body">
+
+            <h5 class="text-danger mb-4">
+                Are you sure you want to delete this student?
+            </h5>
+
+            <table class="table table-bordered">
+                <tr>
+                    <th>Name</th>
+                    <td>@Model.Name</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>@Model.EmailId</td>
+                </tr>
+                <tr>
+                    <th>Department</th>
+                    <td>@Model.Department</td>
+                </tr>
+                <tr>
+                    <th>Course</th>
+                    <td>@Model.CourseId</td>
+                </tr>
+            </table>
+
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+
+                <button type="submit" class="btn btn-danger me-2">
+                    Yes, Delete
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary">
+                    Cancel
+                </a>
+            </form>
+
+        </div>
+    </div>
+</div>

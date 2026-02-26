@@ -1,0 +1,88 @@
+﻿@model StudentManagementSystem.Models.Department
+
+<div class="container mt-5">
+    <div class="card shadow border-0 rounded-4">
+
+        <div class="card-header bg-success text-white">
+            <h4>Create Student</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="Create">
+
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input asp-for="EmailId" class="form-control" />
+                        <span asp-validation-for="EmailId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Age</label>
+                        <input asp-for="Age" class="form-control" />
+                        <span asp-validation-for="Age" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Department</label>
+                        <select asp-for="Department"
+                                asp-items="@(new SelectList(ViewBag.Departments))"
+                                class="form-select">
+                            <option value="">-- Select Department --</option>
+                        </select>
+                        <span asp-validation-for="Department" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Course</label>
+                        <select asp-for="CourseId"
+                                asp-items="@(new SelectList(ViewBag.Courses))"
+                                class="form-select">
+                            <option value="">-- Select Course --</option>
+                        </select>
+                        <span asp-validation-for="CourseId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Start Date</label>
+                        <input asp-for="CourseStartDate" type="date" class="form-control" />
+                        <span asp-validation-for="CourseStartDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">End Date</label>
+                        <input asp-for="CourseEndDate" type="date" class="form-control" />
+                        <span asp-validation-for="CourseEndDate" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success px-4 me-2">
+                        Save
+                    </button>
+
+                    <a asp-action="Index" class="btn btn-secondary">
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

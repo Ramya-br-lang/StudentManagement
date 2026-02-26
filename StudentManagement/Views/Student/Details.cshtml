@@ -1,0 +1,11 @@
+﻿@model StudentManagementSystem.Models.Department
+
+<div>
+    <p><strong>Name:</strong> @Model.Name</p>
+    <p><strong>Email:</strong> @Model.EmailId</p>
+    <p><strong>Age:</strong> @Model.Age</p>
+    <p><strong>Department:</strong> @Model.Department</p>
+    <p><strong>Course:</strong> @Model.CourseId</p>
+    <p><strong>Start Date:</strong> @Model.CourseStartDate.ToShortDateString()</p>
+    <p><strong>End Date:</strong> @Model.CourseEndDate.ToShortDateString()</p>
+</div>

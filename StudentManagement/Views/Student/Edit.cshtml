@@ -1,0 +1,61 @@
+﻿@model StudentManagementSystem.Models.Department
+
+<form asp-action="Edit" method="post">
+
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row g-3">
+
+        <div class="col-md-6">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="EmailId" class="form-label"></label>
+            <input asp-for="EmailId" class="form-control" />
+            <span asp-validation-for="EmailId" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Age" class="form-label"></label>
+            <input asp-for="Age" class="form-control" />
+            <span asp-validation-for="Age" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="Department" class="form-label"></label>
+            <input asp-for="Department" class="form-control" />
+        </div>
+
+        <div class="col-md-4">
+            <label asp-for="CourseId" class="form-label"></label>
+            <input asp-for="CourseId" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="CourseStartDate" class="form-label"></label>
+            <input asp-for="CourseStartDate" type="date" class="form-control" />
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="CourseEndDate" class="form-label"></label>
+            <input asp-for="CourseEndDate" type="date" class="form-control" />
+        </div>
+
+    </div>
+
+    <div class="mt-4 text-end">
+        <button type="submit" class="btn btn-success">
+            Update
+        </button>
+        <button type="button" class="btn btn-secondary"
+                data-bs-dismiss="modal">
+            Cancel
+        </button>
+    </div>
+
+</form>
