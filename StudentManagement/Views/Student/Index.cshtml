@@ -36,8 +36,8 @@
                             <td class="fw-semibold">@item.Name</td>
                             <td>@item.EmailId</td>
                             <td>@item.Age</td>
-                            <td>@item.Department</td>
-                            <td>@item.CourseId</td>
+                            <td>@item.Department?.DepartmentName</td>
+                            <td>@item.Course?.CourseName</td>
                             <td>@item.CourseStartDate.ToShortDateString()</td>
                             <td>@item.CourseEndDate.ToShortDateString()</td>
 

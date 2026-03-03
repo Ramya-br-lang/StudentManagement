@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace StudentManagementSystem.Models
 {
@@ -8,5 +9,9 @@ namespace StudentManagementSystem.Models
 
         [Required]
         public string DepartmentName { get; set; }
+        
+        // Navigation collections
+        public ICollection<Course> Courses { get; set; } = new List<Course>();
+        public ICollection<Faculty> Faculties { get; set; } = new List<Faculty>();
     }
 }

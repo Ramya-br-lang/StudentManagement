@@ -1,0 +1,33 @@
+@model StudentManagementSystem.Models.Faculty
+
+<div class="container mt-4">
+    <h3>Assign Courses to @Model.Name</h3>
+    <hr />
+
+    <form asp-action="AssignCourses" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+
+        <div class="mb-3">
+            <label class="form-label">Select Courses (from faculty's department)</label>
+            @{
+                var courses = ViewBag.Courses as MultiSelectList;
+            }
+            @if (courses != null)
+            {
+                <select name="selectedCourseIds" multiple class="form-select">
+                    @foreach (var item in courses)
+                    {
+                        <option value="@item.Value" selected="@(item.Selected ? "selected" : null)">@item.Text</option>
+                    }
+                </select>
+            }
+            else
+            {
+                <div class="alert alert-info">No courses available for this department.</div>
+            }
+        </div>
+
+        <button type="submit" class="btn btn-success">Save</button>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

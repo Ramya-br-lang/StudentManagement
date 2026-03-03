@@ -1,52 +1,62 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
+using System.Linq;
 
 namespace StudentManagementSystem.Controllers
 {
-    public class DepartmentsController : Controller
+    public class DepartmentController : Controller
     {
         private readonly AppDbContext _context;
 
-        public DepartmentsController(AppDbContext context)
+        public DepartmentController(AppDbContext context)
         {
             _context = context;
         }
 
-        // ================= INDEX =================
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Departments.ToListAsync());
+            var departments = _context.Departments.ToList();
+            return View(departments);
         }
 
-        // ================= CREATE =================
         public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Department department)
+        public IActionResult Create(Department department)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(department);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _context.Departments.Add(department);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
+
             return View(department);
         }
 
-        // ================= EDIT =================
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var department = await _context.Departments.FindAsync(id);
+            var department = _context.Departments.Find(id);
+            if (department == null)
+                return NotFound();
 
+            return View(department);
+        }
+
+        public IActionResult Edit(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var department = _context.Departments.Find(id);
             if (department == null)
                 return NotFound();
 
@@ -55,30 +65,25 @@ namespace StudentManagementSystem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Department department)
+        public IActionResult Edit(int id, Department department)
         {
             if (id != department.Id)
                 return NotFound();
 
-            if (ModelState.IsValid)
-            {
-                _context.Update(department);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            if (!ModelState.IsValid)
+                return View(department);
 
-            return View(department);
+            _context.Update(department);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
 
-        // ================= DELETE =================
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var department = await _context.Departments
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var department = _context.Departments.Find(id);
             if (department == null)
                 return NotFound();
 
@@ -87,12 +92,24 @@ namespace StudentManagementSystem.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var department = await _context.Departments.FindAsync(id);
+            var department = _context.Departments.Find(id);
+            if (department != null)
+            {
+                // Prevent deleting department with existing faculties or courses
+                var hasFaculties = _context.Faculties.Any(f => f.DepartmentId == id);
+                var hasCourses = _context.Courses.Any(c => c.DepartmentId == id);
+                if (hasFaculties || hasCourses)
+                {
+                    // Add model error and return to Delete view with message
+                    ModelState.AddModelError(string.Empty, "Cannot delete department because faculties or courses are assigned to it.");
+                    return View(department);
+                }
 
-            _context.Departments.Remove(department);
-            await _context.SaveChangesAsync();
+                _context.Departments.Remove(department);
+                _context.SaveChanges();
+            }
 
             return RedirectToAction(nameof(Index));
         }

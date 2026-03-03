@@ -1,0 +1,13 @@
+@model StudentManagementSystem.Models.Course
+
+<div class="container mt-4">
+    <h3>Course Details</h3>
+    <hr />
+
+    <p><strong>Name:</strong> @Model.CourseName</p>
+    <p><strong>Credits:</strong> @Model.Credits</p>
+    <p><strong>Semester:</strong> @Model.Semester</p>
+    <p><strong>Department:</strong> @Model.Department?.DepartmentName</p>
+
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
+</div>

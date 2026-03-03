@@ -13,37 +13,24 @@ namespace StudentManagementSystem.Controllers
         public StudentController(AppDbContext context)
         {
             _context = context;
-
-
         }
-            private void LoadDropdowns()
+
+        // ================= LOAD DROPDOWNS =================
+        private void LoadDropdowns()
         {
-            ViewBag.Departments = new List<string>
-    {
-        "CSE",
-        "ECE",
-        "IT",
-        "Mechanical",
-        "Civil"
-    };
-
-            ViewBag.Courses = new List<string>
-    {
-        "Full Stack",
-        "Data Science",
-        "AI & ML",
-        "Cloud Computing",
-        "Cyber Security"
-    };
+            ViewBag.Departments = new SelectList(_context.Departments, "Id", "DepartmentName");
+            // Do not load all courses by default; courses will be loaded based on selected department via AJAX
+            ViewBag.Courses = new SelectList(Enumerable.Empty<SelectListItem>());
         }
-        
 
         // ================= INDEX =================
         public async Task<IActionResult> Index()
         {
+            var students = _context.Students
+                .Include(s => s.Department)
+                .Include(s => s.Course);
 
-            var students = await _context.Students.ToListAsync();
-            return View(students);
+            return View(await students.ToListAsync());
         }
 
         // ================= DETAILS =================
@@ -53,6 +40,8 @@ namespace StudentManagementSystem.Controllers
                 return NotFound();
 
             var student = await _context.Students
+                .Include(s => s.Department)
+                .Include(s => s.Course)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (student == null)
@@ -64,24 +53,7 @@ namespace StudentManagementSystem.Controllers
         // ================= CREATE =================
         public IActionResult Create()
         {
-            ViewBag.Departments = new List<string>
-    {
-        "CSE",
-        "ECE",
-        "IT",
-        "Mechanical",
-        "Civil"
-    };
-
-            ViewBag.Courses = new List<string>
-    {
-        "Full Stack",
-        "Data Science",
-        "AI & ML",
-        "Cloud Computing",
-        "Cyber Security"
-    };
-
+            LoadDropdowns();
             return View();
         }
 
@@ -89,34 +61,24 @@ namespace StudentManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Student student)
         {
+            // Server-side validation: ensure course exists and belongs to selected department
+            var course = await _context.Courses.FindAsync(student.CourseId);
+            if (course == null || course.DepartmentId != student.DepartmentId)
+            {
+                ModelState.AddModelError("CourseId", "Selected course is invalid for the chosen department.");
+            }
+
             if (!ModelState.IsValid)
             {
-                
-                ViewBag.Departments = new List<string>
-        {
-            "CSE",
-            "ECE",
-            "IT",
-            "Mechanical",
-            "Civil"
-        };
-
-                ViewBag.Courses = new List<string>
-        {
-            "Full Stack",
-            "Data Science",
-            "AI & ML",
-            "Cloud Computing",
-            "Cyber Security"
-        };
-
+                LoadDropdowns();
                 return View(student);
             }
 
-            _context.Add(student);
+            _context.Students.Add(student);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
         // ================= EDIT =================
         public async Task<IActionResult> Edit(int? id)
         {
@@ -128,77 +90,34 @@ namespace StudentManagementSystem.Controllers
             if (student == null)
                 return NotFound();
 
-            ViewBag.Departments = new List<string>
-    {
-        "CSE",
-        "ECE",
-        "IT",
-        "Mechanical",
-        "Civil"
-    };
-
-            ViewBag.Courses = new List<string>
-    {
-        "Full Stack",
-        "Data Science",
-        "AI & ML",
-        "Cloud Computing",
-        "Cyber Security"
-    };
-
+            LoadDropdowns();
             return View(student);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Student student)
         {
             if (id != student.Id)
                 return NotFound();
+            // Validate course belongs to department
+            var course = await _context.Courses.FindAsync(student.CourseId);
+            if (course == null || course.DepartmentId != student.DepartmentId)
+            {
+                ModelState.AddModelError("CourseId", "Selected course is invalid for the chosen department.");
+            }
 
             if (!ModelState.IsValid)
             {
-                // Reload dropdown lists
-                ViewBag.Departments = new List<string>
-        {
-            "CSE",
-            "ECE",
-            "IT",
-            "Mechanical",
-            "Civil"
-        };
-
-                ViewBag.Courses = new List<string>
-        {
-            "Full Stack",
-            "Data Science",
-            "AI & ML",
-            "Cloud Computing",
-            "Cyber Security"
-        };
-
+                LoadDropdowns();
                 return View(student);
             }
 
-            try
-            {
-                _context.Update(student);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!_context.Students.Any(e => e.Id == student.Id))
-                    return NotFound();
-                else
-                    throw;
-            }
+            _context.Update(student);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
-
-
-
-
-
 
         // ================= DELETE =================
         public async Task<IActionResult> Delete(int? id)
@@ -207,6 +126,8 @@ namespace StudentManagementSystem.Controllers
                 return NotFound();
 
             var student = await _context.Students
+                .Include(s => s.Department)
+                .Include(s => s.Course)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (student == null)
@@ -221,13 +142,11 @@ namespace StudentManagementSystem.Controllers
         {
             var student = await _context.Students.FindAsync(id);
 
-            if (student == null)
+            if (student != null)
             {
-                return NotFound();
+                _context.Students.Remove(student);
+                await _context.SaveChangesAsync();
             }
-
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

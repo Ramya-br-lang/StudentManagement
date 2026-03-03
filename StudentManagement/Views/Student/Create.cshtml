@@ -1,4 +1,4 @@
-﻿@model StudentManagementSystem.Models.Department
+﻿@model StudentManagementSystem.Models.Student
 
 <div class="container mt-5">
     <div class="card shadow border-0 rounded-4">
@@ -35,19 +35,20 @@
 
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Department</label>
-                        <select asp-for="Department"
-                                asp-items="@(new SelectList(ViewBag.Departments))"
+                        <select asp-for="DepartmentId"
+                                asp-items="@(ViewBag.Departments as SelectList)"
                                 class="form-select">
                             <option value="">-- Select Department --</option>
                         </select>
-                        <span asp-validation-for="Department" class="text-danger"></span>
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Course</label>
                         <select asp-for="CourseId"
-                                asp-items="@(new SelectList(ViewBag.Courses))"
-                                class="form-select">
+                                asp-items="@(ViewBag.Courses as SelectList)"
+                                class="form-select"
+                                data-selected="@(Model?.CourseId)">
                             <option value="">-- Select Course --</option>
                         </select>
                         <span asp-validation-for="CourseId" class="text-danger"></span>
@@ -85,4 +86,63 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var deptSelect = document.querySelector('select[name="DepartmentId"]');
+            var courseSelect = document.querySelector('select[name="CourseId"]');
+
+            // small helper to fetch and populate courses
+            function getProp(obj, names) {
+                for (var i = 0; i < names.length; i++) {
+                    if (obj[names[i]] !== undefined && obj[names[i]] !== null) return obj[names[i]];
+                }
+                return undefined;
+            }
+
+            function loadCourses(deptId, selectedId) {
+                courseSelect.innerHTML = '<option value="">-- Select Course --</option>';
+                if (!deptId) return;
+
+                var url = '@Url.Action("GetByDepartment", "Course")' + '?id=' + encodeURIComponent(deptId);
+                console.log('loading courses from', url);
+
+                fetch(url)
+                    .then(function (res) {
+                        console.log('fetch status', res.status);
+                        return res.text();
+                    })
+                    .then(function (text) {
+                        try {
+                            var data = JSON.parse(text);
+                        } catch (e) {
+                            console.error('Invalid JSON response for courses:', text);
+                            return [];
+                        }
+
+                        if (!Array.isArray(data)) data = [];
+
+                        console.log('courses returned', data);
+                        data.forEach(function (c) {
+                            var opt = document.createElement('option');
+                            var id = getProp(c, ['Id', 'id', 'ID']);
+                            var name = getProp(c, ['CourseName', 'courseName', 'Name', 'name']);
+                            opt.value = id !== undefined ? id : '';
+                            opt.text = name !== undefined ? name : (id !== undefined ? id : '');
+                            if (selectedId && String(selectedId) === String(id)) opt.selected = true;
+                            courseSelect.appendChild(opt);
+                        });
+                    })
+                    .catch(function (err) { console.error('fetch error', err); });
+            }
+
+            if (deptSelect) {
+                deptSelect.addEventListener('change', function () { loadCourses(this.value); });
+                // if department is pre-selected (e.g. on validation error), load courses
+                if (deptSelect.value) {
+                    var selectedCourse = document.querySelector('select[name="CourseId"]').getAttribute('data-selected');
+                    loadCourses(deptSelect.value, selectedCourse);
+                }
+            }
+        });
+    </script>
 }

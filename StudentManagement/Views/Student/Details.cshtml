@@ -1,11 +1,16 @@
-﻿@model StudentManagementSystem.Models.Department
+﻿@model StudentManagementSystem.Models.Student
 
-<div>
+<div class="container mt-4">
+    <h3>Student Details</h3>
+    <hr />
+
     <p><strong>Name:</strong> @Model.Name</p>
     <p><strong>Email:</strong> @Model.EmailId</p>
     <p><strong>Age:</strong> @Model.Age</p>
-    <p><strong>Department:</strong> @Model.Department</p>
-    <p><strong>Course:</strong> @Model.CourseId</p>
+    <p><strong>Department:</strong> @Model.Department?.DepartmentName</p>
+    <p><strong>Course:</strong> @Model.Course?.CourseName</p>
     <p><strong>Start Date:</strong> @Model.CourseStartDate.ToShortDateString()</p>
     <p><strong>End Date:</strong> @Model.CourseEndDate.ToShortDateString()</p>
+
+    <a asp-action="Index" class="btn btn-secondary">Back</a>
 </div>

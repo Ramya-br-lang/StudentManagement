@@ -1,5 +1,4 @@
-﻿@model StudentManagementSystem.Models.Department
-
+﻿@model StudentManagementSystem.Models.Student
 <form asp-action="Edit" method="post">
 
     @Html.AntiForgeryToken()
@@ -27,13 +26,19 @@
         </div>
 
         <div class="col-md-4">
-            <label asp-for="Department" class="form-label"></label>
-            <input asp-for="Department" class="form-control" />
+            <label asp-for="DepartmentId" class="form-label"></label>
+            <select asp-for="DepartmentId" class="form-select" asp-items="@(ViewBag.Departments as SelectList)">
+                <option value="">-- Select Department --</option>
+            </select>
+            <span asp-validation-for="DepartmentId" class="text-danger"></span>
         </div>
 
         <div class="col-md-4">
             <label asp-for="CourseId" class="form-label"></label>
-            <input asp-for="CourseId" class="form-control" />
+            <select asp-for="CourseId" class="form-select" asp-items="@(ViewBag.Courses as SelectList)" data-selected="@Model.CourseId">
+                <option value="">-- Select Course --</option>
+            </select>
+            <span asp-validation-for="CourseId" class="text-danger"></span>
         </div>
 
         <div class="col-md-6">
@@ -47,6 +52,83 @@
         </div>
 
     </div>
+    <div class="col-md-4">
+        <label asp-for="CourseId" class="form-label"></label>
+        <select asp-for="CourseId" class="form-select" asp-items="@(ViewBag.Courses as SelectList)" data-selected="@Model.CourseId">
+            <option value="">-- Select Course --</option>
+        </select>
+        <span asp-validation-for="CourseId" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="CourseStartDate" class="form-label"></label>
+        <input asp-for="CourseStartDate" type="date" class="form-control" />
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="CourseEndDate" class="form-label"></label>
+        <input asp-for="CourseEndDate" type="date" class="form-control" />
+    </div>
+
+    @section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+    }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var deptSelect = document.querySelector('select[name="DepartmentId"]');
+            var courseSelect = document.querySelector('select[name="CourseId"]');
+
+            function getProp(obj, names) {
+                for (var i = 0; i < names.length; i++) {
+                    if (obj[names[i]] !== undefined && obj[names[i]] !== null) return obj[names[i]];
+                }
+                return undefined;
+            }
+
+            function loadCourses(deptId, selectedId) {
+                courseSelect.innerHTML = '<option value="">-- Select Course --</option>';
+                if (!deptId) return;
+
+                var url = '@Url.Action("GetByDepartment", "Course")' + '?id=' + encodeURIComponent(deptId);
+                console.log('loading courses from', url);
+
+                fetch(url)
+                    .then(function (res) { return res.text(); })
+                    .then(function (text) {
+                        try {
+                            var data = JSON.parse(text);
+                        } catch (e) {
+                            console.error('Invalid JSON response for courses:', text);
+                            return [];
+                        }
+
+                        if (!Array.isArray(data)) data = [];
+                        console.log('courses returned', data);
+
+                        data.forEach(function (c) {
+                            var opt = document.createElement('option');
+                            var id = getProp(c, ['Id', 'id', 'ID']);
+                            var name = getProp(c, ['CourseName', 'courseName', 'Name', 'name']);
+                            opt.value = id !== undefined ? id : '';
+                            opt.text = name !== undefined ? name : (id !== undefined ? id : '');
+                            if (selectedId && String(selectedId) === String(id)) opt.selected = true;
+                            courseSelect.appendChild(opt);
+                        });
+                    })
+                    .catch(function (err) { console.error('fetch error', err); });
+            }
+
+            if (deptSelect) {
+                deptSelect.addEventListener('change', function () { loadCourses(this.value); });
+                // load courses for current department value (for edit)
+                if (deptSelect.value) {
+                    var selectedCourse = courseSelect.getAttribute('data-selected');
+                    loadCourses(deptSelect.value, selectedCourse);
+                }
+            }
+        });
+    </script>
 
     <div class="mt-4 text-end">
         <button type="submit" class="btn btn-success">
