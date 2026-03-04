@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
@@ -15,22 +15,14 @@ namespace StudentManagementSystem.Controllers
             _context = context;
         }
 
-        // ================= LOAD DROPDOWNS =================
-        private void LoadDropdowns()
-        {
-            ViewBag.Departments = new SelectList(_context.Departments, "Id", "DepartmentName");
-            // Do not load all courses by default; courses will be loaded based on selected department via AJAX
-            ViewBag.Courses = new SelectList(Enumerable.Empty<SelectListItem>());
-        }
-
         // ================= INDEX =================
         public async Task<IActionResult> Index()
         {
-            var students = _context.Students
+            var students = await _context.Students
                 .Include(s => s.Department)
-                .Include(s => s.Course);
-
-            return View(await students.ToListAsync());
+                .Include(s => s.Course)
+                .ToListAsync();
+            return View(students);
         }
 
         // ================= DETAILS =================
@@ -53,7 +45,7 @@ namespace StudentManagementSystem.Controllers
         // ================= CREATE =================
         public async Task<IActionResult> Create()
         {
-            LoadDropdowns();
+            await LoadDropdowns();
             return View();
         }
 
@@ -61,20 +53,25 @@ namespace StudentManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Student student)
         {
-            // Server-side validation: ensure course exists and belongs to selected department
-            var course = await _context.Courses.FindAsync(student.CourseId);
-            if (course == null || course.DepartmentId != student.DepartmentId)
+            // Server-side validation for department-course relationship
+            if (student.DepartmentId > 0 && student.CourseId > 0)
             {
-                ModelState.AddModelError("CourseId", "Selected course is invalid for the chosen department.");
+                var course = await _context.Courses
+                    .FirstOrDefaultAsync(c => c.Id == student.CourseId && c.DepartmentId == student.DepartmentId);
+                
+                if (course == null)
+                {
+                    ModelState.AddModelError("CourseId", "Selected course does not belong to the selected department.");
+                }
             }
 
             if (!ModelState.IsValid)
             {
-                LoadDropdowns();
+                await LoadDropdowns(student.DepartmentId);
                 return View(student);
             }
 
-            _context.Students.Add(student);
+            _context.Add(student);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -89,7 +86,7 @@ namespace StudentManagementSystem.Controllers
             if (student == null)
                 return NotFound();
 
-            LoadDropdowns();
+            await LoadDropdowns(student.DepartmentId);
             return View(student);
         }
 
@@ -99,21 +96,37 @@ namespace StudentManagementSystem.Controllers
         {
             if (id != student.Id)
                 return NotFound();
-            // Validate course belongs to department
-            var course = await _context.Courses.FindAsync(student.CourseId);
-            if (course == null || course.DepartmentId != student.DepartmentId)
+
+            // Server-side validation for department-course relationship
+            if (student.DepartmentId > 0 && student.CourseId > 0)
             {
-                ModelState.AddModelError("CourseId", "Selected course is invalid for the chosen department.");
+                var course = await _context.Courses
+                    .FirstOrDefaultAsync(c => c.Id == student.CourseId && c.DepartmentId == student.DepartmentId);
+                
+                if (course == null)
+                {
+                    ModelState.AddModelError("CourseId", "Selected course does not belong to the selected department.");
+                }
             }
 
             if (!ModelState.IsValid)
             {
-                LoadDropdowns();
+                await LoadDropdowns(student.DepartmentId);
                 return View(student);
             }
 
-            _context.Update(student);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Update(student);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!_context.Students.Any(e => e.Id == student.Id))
+                    return NotFound();
+                else
+                    throw;
+            }
 
             return RedirectToAction(nameof(Index));
         }
@@ -149,17 +162,32 @@ namespace StudentManagementSystem.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-            if (student != null)
-            {
-                _context.Students.Remove(student);
-                await _context.SaveChangesAsync();
-            }
+        // ================= AJAX METHODS =================
+        [HttpGet]
+        public async Task<JsonResult> GetCoursesByDepartment(int departmentId)
+        {
+            var courses = await _context.Courses
+                .Where(c => c.DepartmentId == departmentId)
+                .Select(c => new { value = c.Id, text = c.CourseName })
+                .ToListAsync();
+
+            return Json(courses);
+        }
+
+        // ================= HELPER METHODS =================
+        private async Task LoadDropdowns(int? selectedDepartmentId = null)
+        {
+            ViewBag.DepartmentId = new SelectList(
+                await _context.Departments.ToListAsync(), 
+                "Id", 
+                "DepartmentName", 
+                selectedDepartmentId);
 
             if (selectedDepartmentId.HasValue)
             {
                 ViewBag.CourseId = new SelectList(
                     await _context.Courses.Where(c => c.DepartmentId == selectedDepartmentId).ToListAsync(),
-                    "Id",
+                    "Id", 
                     "CourseName");
             }
             else
@@ -169,4 +197,3 @@ namespace StudentManagementSystem.Controllers
         }
     }
 }
-

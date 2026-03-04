@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using StudentManagement.Models;
+using StudentManagementSystem.Models;
 using System.Diagnostics;
 
-namespace StudentManagement.Controllers
+namespace StudentManagementSystem.Controllers
 {
     public class HomeController : Controller
     {
@@ -19,7 +20,10 @@ namespace StudentManagement.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            });
         }
     }
 }

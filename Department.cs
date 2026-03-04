@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace StudentManagementSystem.Models
@@ -10,10 +9,10 @@ namespace StudentManagementSystem.Models
         [Required(ErrorMessage = "Department name is required")]
         [Display(Name = "Department Name")]
         public string DepartmentName { get; set; }
-        
-        // Navigation collections
-        public ICollection<Course> Courses { get; set; } = new List<Course>();
-        public ICollection<Faculty> Faculties { get; set; } = new List<Faculty>();
+
+        // Navigation properties
+        public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
+        public virtual ICollection<Student> Students { get; set; } = new List<Student>();
+        public virtual ICollection<Faculty> Faculties { get; set; } = new List<Faculty>();
     }
 }
-

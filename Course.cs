@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StudentManagementSystem.Models
@@ -26,8 +26,8 @@ namespace StudentManagementSystem.Models
         // Navigation properties
         [ForeignKey("DepartmentId")]
         public virtual Department? Department { get; set; }
-
+        
         public virtual ICollection<Student> Students { get; set; } = new List<Student>();
+        public virtual ICollection<FacultyCourse> FacultyCourses { get; set; } = new List<FacultyCourse>();
     }
 }
-

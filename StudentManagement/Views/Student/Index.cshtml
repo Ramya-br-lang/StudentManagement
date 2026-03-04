@@ -41,38 +41,40 @@
                             <td>@item.CourseStartDate.ToShortDateString()</td>
                             <td>@item.CourseEndDate.ToShortDateString()</td>
 
-                            <td>
+                                <td>
 
-                                <!-- Details Button -->
-                                <button type="button"
-                                        class="btn btn-info btn-sm me-1 text-white"
-                                        onclick="loadDetails(@item.Id)">
-                                    Details
-                                </button>
-
-                                <!-- Edit Button -->
-                                <button type="button"
-                                        class="btn btn-warning btn-sm me-1"
-                                        onclick="loadEdit(@item.Id)">
-                                    Edit
-                                </button>
-
-                                <!-- Delete -->
-                                <form asp-action="Delete"
-                                      asp-route-id="@item.Id"
-                                      method="post"
-                                      class="d-inline"
-                                      onsubmit="return confirm('Are you sure you want to delete this student?');">
-
-                                    <button type="submit"
-                                            class="btn btn-danger btn-sm">
-                                        Delete
+                                    <!-- Details Button -->
+                                    <button type="button"
+                                            class="btn btn-info btn-sm me-1 text-white"
+                                            onclick="loadDetails(@item.Id)">
+                                        Details
                                     </button>
-                                </form>
 
-                            </td>
-                        </tr>
+                                    <!-- Edit Button -->
+                                    <button type="button"
+                                            class="btn btn-warning btn-sm me-1"
+                                            onclick="loadEdit(@item.Id)">
+                                        Edit
+                                    </button>
+
+                                    <!-- Delete -->
+                                    <form asp-action="Delete"
+                                          asp-route-id="@item.Id"
+                                          method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete this student?');">
+
+                                        <button type="submit"
+                                                class="btn btn-danger btn-sm">
+                                            Delete
+                                        </button>
+                                    </form>
+
+                                </td>
+                            </tr>
+                        }
                     }
+
                 </tbody>
 
             </table>
@@ -117,7 +119,7 @@
     <script>
 
         function loadDetails(id) {
-            fetch('@Url.Action("Details", "Student")/' + id)
+            fetch('/Student/Details/' + id)
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById("detailsContent").innerHTML = data;
@@ -127,7 +129,7 @@
         }
 
         function loadEdit(id) {
-            fetch('@Url.Action("Edit", "Student")/' + id)
+            fetch('/Student/Edit/' + id)
                 .then(response => response.text())
                 .then(data => {
                     document.getElementById("editContent").innerHTML = data;
