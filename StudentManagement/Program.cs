@@ -18,7 +18,7 @@ app.UseRouting();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Student}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // Ensure pending EF Core migrations are applied on startup (development-friendly)
 using (var scope = app.Services.CreateScope())

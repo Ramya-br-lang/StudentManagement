@@ -131,16 +131,29 @@ namespace StudentManagementSystem.Controllers
         // GET: Faculty/AssignCourses/5
         public IActionResult AssignCourses(int id)
         {
-            var faculty = _context.Faculties.Include(f => f.Department).FirstOrDefault(f => f.Id == id);
+            var faculty = _context.Faculties
+                .Include(f => f.Department)
+                .FirstOrDefault(f => f.Id == id);
+
             if (faculty == null)
                 return NotFound();
 
-            // only courses from the faculty's department
-            var courses = _context.Courses.Where(c => c.DepartmentId == faculty.DepartmentId).ToList();
+            var courses = _context.Courses
+                .Where(c => c.DepartmentId == faculty.DepartmentId)
+                .ToList();
 
-            var assignedCourseIds = _context.FacultyCourses.Where(fc => fc.FacultyId == id).Select(fc => fc.CourseId).ToList();
+            var assignedCourseIds = _context.FacultyCourses
+                .Where(fc => fc.FacultyId == id)
+                .Select(fc => fc.CourseId)
+                .ToList();
 
-            ViewBag.Courses = new MultiSelectList(courses, "Id", "CourseName", assignedCourseIds);
+            ViewBag.Courses = new MultiSelectList(
+                courses,
+                "Id",
+                "CourseName",
+                assignedCourseIds
+            );
+
             return View(faculty);
         }
 
@@ -152,24 +165,36 @@ namespace StudentManagementSystem.Controllers
             if (faculty == null)
                 return NotFound();
 
-            // ensure selected courses belong to faculty's department
-            var validCourseIds = _context.Courses.Where(c => c.DepartmentId == faculty.DepartmentId).Select(c => c.Id).ToHashSet();
+            selectedCourseIds ??= Array.Empty<int>();
 
-            selectedCourseIds = selectedCourseIds ?? new int[0];
+            var existingAssignments = _context.FacultyCourses
+                .Where(fc => fc.FacultyId == id)
+                .ToList();
 
+            // Remove unchecked courses
+            foreach (var assignment in existingAssignments)
+            {
+                if (!selectedCourseIds.Contains(assignment.CourseId))
+                {
+                    _context.FacultyCourses.Remove(assignment);
+                }
+            }
+
+            // Add newly selected courses
             foreach (var courseId in selectedCourseIds)
             {
-                if (!validCourseIds.Contains(courseId))
-                    continue; // skip invalid (cross-department) assignment
-
-                var exists = _context.FacultyCourses.Any(fc => fc.FacultyId == id && fc.CourseId == courseId);
-                if (!exists)
+                if (!existingAssignments.Any(fc => fc.CourseId == courseId))
                 {
-                    _context.FacultyCourses.Add(new FacultyCourse { FacultyId = id, CourseId = courseId });
+                    _context.FacultyCourses.Add(new FacultyCourse
+                    {
+                        FacultyId = id,
+                        CourseId = courseId
+                    });
                 }
             }
 
             _context.SaveChanges();
+
             return RedirectToAction(nameof(Details), new { id });
         }
     }

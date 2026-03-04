@@ -1,33 +1,57 @@
 @model StudentManagementSystem.Models.Faculty
 
 <div class="container mt-4">
-    <h3>Assign Courses to @Model.Name</h3>
-    <hr />
 
-    <form asp-action="AssignCourses" method="post">
-        <input type="hidden" name="id" value="@Model.Id" />
-
-        <div class="mb-3">
-            <label class="form-label">Select Courses (from faculty's department)</label>
-            @{
-                var courses = ViewBag.Courses as MultiSelectList;
-            }
-            @if (courses != null)
-            {
-                <select name="selectedCourseIds" multiple class="form-select">
-                    @foreach (var item in courses)
-                    {
-                        <option value="@item.Value" selected="@(item.Selected ? "selected" : null)">@item.Text</option>
-                    }
-                </select>
-            }
-            else
-            {
-                <div class="alert alert-info">No courses available for this department.</div>
-            }
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4>Assign Courses to Faculty</h4>
         </div>
 
-        <button type="submit" class="btn btn-success">Save</button>
-        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-secondary">Cancel</a>
-    </form>
+        <div class="card-body">
+
+            <h5>
+                Faculty: <strong>@Model.Name</strong>
+            </h5>
+
+            <p>
+                Department:
+                <strong>@Model.Department?.DepartmentName</strong>
+            </p>
+
+            <hr />
+
+            <form asp-action="AssignCourses" method="post">
+
+                <input type="hidden" name="id" value="@Model.Id" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Select Courses
+                    </label>
+
+                    <select name="selectedCourseIds"
+                            asp-items="ViewBag.Courses"
+                            multiple
+                            class="form-control"
+                            size="8">
+                    </select>
+
+                    <small class="text-muted">
+                        Hold CTRL to select multiple courses
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    Save Assignments
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
 </div>
