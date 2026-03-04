@@ -1,8 +1,629 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+        :root {
+            --primary: #1e1e2e;
+            --secondary: #0f3460;
+            --accent: #e94560;
+            --success: #00d4aa;
+            --warning: #ffa502;
+            --light: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: linear-gradient(135deg, #0f3460 0%, #1e1e2e 50%, #16213e 100%);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+            /* Animated background elements */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle at 20% 50%, rgba(233, 69, 96, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(0, 212, 170, 0.1) 0%, transparent 50%);
+                pointer-events: none;
+                z-index: 1;
+                animation: gradientShift 15s ease infinite;
+            }
+
+        @@keyframes gradientShift {
+            0%, 100% {
+                filter: brightness(1) saturate(1);
+            }
+
+            50% {
+                filter: brightness(1.1) saturate(1.1);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* HERO SECTION */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 60px 20px;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #00d4aa 0%, #e94560 50%, #00d4aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -2px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 50px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+
+        .hero-accent {
+            display: inline-block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #e94560, #00d4aa);
+            margin-bottom: 30px;
+            border-radius: 10px;
+        }
+
+        /* CTA Buttons */
+        .cta-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 80px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-hero {
+            padding: 16px 32px;
+            font-size: 16px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+
+            .btn-hero::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: inherit;
+                filter: brightness(1.3);
+                transition: left 0.4s ease;
+                z-index: -1;
+            }
+
+            .btn-hero:hover::before {
+                left: 100%;
+            }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e94560, #ff6b7a);
+            color: white;
+            border-color: #e94560;
+        }
+
+            .btn-primary:hover {
+                transform: translateY(-4px);
+                box-shadow: 0 20px 40px rgba(233, 69, 96, 0.4);
+            }
+
+        .btn-secondary {
+            background: rgba(0, 212, 170, 0.2);
+            color: #00d4aa;
+            border: 2px solid #00d4aa;
+        }
+
+            .btn-secondary:hover {
+                background: linear-gradient(135deg, #00d4aa, #00b8a8);
+                color: #1e1e2e;
+                transform: translateY(-4px);
+                box-shadow: 0 20px 40px rgba(0, 212, 170, 0.3);
+            }
+
+        .btn-tertiary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+            .btn-tertiary:hover {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.5);
+                transform: translateY(-4px);
+                box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+            }
+
+        /* Floating Icons */
+        .floating-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 80px;
+            opacity: 0.08;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .float-1 {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .float-2 {
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .float-3 {
+            top: 30%;
+            right: 5%;
+            animation-delay: 4s;
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-30px) rotate(10deg);
+            }
+        }
+
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* FEATURES SECTION */
+        .features-section {
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        .section-label {
+            font-family: 'Syne', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 13px;
+            color: #00d4aa;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin-bottom: 60px;
+            line-height: 1.8;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+        }
+
+            .feature-card::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -50%;
+                width: 200px;
+                height: 200px;
+                background: radial-gradient(circle, rgba(233, 69, 96, 0.3), transparent);
+                border-radius: 50%;
+                transition: all 0.6s ease;
+            }
+
+            .feature-card:hover::before {
+                top: 0;
+                right: 0;
+            }
+
+            .feature-card:nth-child(2)::before {
+                background: radial-gradient(circle, rgba(0, 212, 170, 0.3), transparent);
+            }
+
+            .feature-card:nth-child(3)::before {
+                background: radial-gradient(circle, rgba(255, 165, 2, 0.3), transparent);
+            }
+
+            .feature-card:nth-child(4)::before {
+                background: radial-gradient(circle, rgba(100, 200, 255, 0.3), transparent);
+            }
+
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+
+        .feature-card:nth-child(1) .feature-icon {
+            color: #e94560;
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            color: #00d4aa;
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            color: #ffa502;
+        }
+
+        .feature-card:nth-child(4) .feature-icon {
+            color: #64c8ff;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        .feature-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-description {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 80px;
+            padding-top: 80px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Syne', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00d4aa, #e94560);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 1px;
+        }
+
+        @@media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .cta-group {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .btn-hero {
+                width: 100%;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+            .fade-in:nth-child(2) {
+                animation-delay: 0.1s;
+            }
+
+            .fade-in:nth-child(3) {
+                animation-delay: 0.2s;
+            }
+
+            .fade-in:nth-child(4) {
+                animation-delay: 0.3s;
+            }
+
+            .fade-in:nth-child(5) {
+                animation-delay: 0.4s;
+            }
+    </style>
+</head>
+<body>
+    <!-- Floating Icons Background -->
+    <div class="floating-icons">
+        <i class="fas fa-graduation-cap float-1 floating-icon"></i>
+        <i class="fas fa-book float-2 floating-icon"></i>
+        <i class="fas fa-users float-3 floating-icon"></i>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-accent"></div>
+            <h1 class="hero-title">Student Management System</h1>
+            <p class="hero-subtitle">
+                Streamline your academic operations with our sophisticated, all-in-one management platform.
+            </p>
+
+            <div class="cta-group">
+                <a asp-controller="Student" asp-action="Index" class="btn-hero btn-primary">
+                    <i class="fas fa-user-graduate"></i> Students
+                </a>
+                <a asp-controller="Faculty" asp-action="Index" class="btn-hero btn-secondary">
+                    <i class="fas fa-chalkboard-user"></i> Faculty
+                </a>
+                <a asp-controller="Department" asp-action="Index" class="btn-hero btn-tertiary">
+                    <i class="fas fa-building"></i> Departments
+                </a>
+                <a asp-controller="Course" asp-action="Index" class="btn-hero btn-tertiary">
+                    <i class="fas fa-book-open"></i> Courses
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section container">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Everything You Need</h2>
+        <p class="section-subtitle">
+            A comprehensive suite of tools designed to empower educators and administrators.
+        </p>
+
+        <div class="features-grid">
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-users-cog"></i></div>
+                <h3 class="feature-title">Student Management</h3>
+                <p class="feature-description">
+                    Effortlessly add, update, and manage comprehensive student records with an intuitive interface.
+                </p>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-person-chalkboard"></i></div>
+                <h3 class="feature-title">Faculty Management</h3>
+                <p class="feature-description">
+                    Organize faculty profiles, track assignments, and manage departmental affiliations seamlessly.
+                </p>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-sitemap"></i></div>
+                <h3 class="feature-title">Department Control</h3>
+                <p class="feature-description">
+                    Maintain institutional structure and link departments with students and faculty members.
+                </p>
+            </div>
+
+            <div class="feature-card fade-in">
+                <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h3 class="feature-title">Course Management</h3>
+                <p class="feature-description">
+                    Create, organize, and manage courses while linking faculty and students efficiently.
+                </p>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <div class="stat-item fade-in">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Institutions</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number">50K+</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+            <div class="stat-item fade-in">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Support</div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll behavior
+        document.querySelectorAll('a[asp-controller]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.borderRadius = '50%';
+                ripple.style.background = 'rgba(255, 255, 255, 0.6)';
+                ripple.style.width = ripple.style.height = '0';
+                ripple.style.top = e.clientY - this.getBoundingClientRect().top + 'px';
+                ripple.style.left = e.clientX - this.getBoundingClientRect().left + 'px';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.animation = 'ripple-animation 0.6s ease-out';
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @@keyframes ripple-animation {
+                0% {
+                    width: 0;
+                    height: 0;
+                    opacity: 1;
+                }
+                100% {
+                    width: 300px;
+                    height: 300px;
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
