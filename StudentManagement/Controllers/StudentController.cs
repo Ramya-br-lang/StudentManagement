@@ -47,7 +47,7 @@ namespace StudentManagementSystem.Controllers
             if (student == null)
                 return NotFound();
 
-            return View(student);
+            return PartialView(student);
         }
 
         // ================= CREATE =================
@@ -148,25 +148,7 @@ namespace StudentManagementSystem.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-            if (student != null)
-            {
-                _context.Students.Remove(student);
-                await _context.SaveChangesAsync();
-            }
-
-            if (selectedDepartmentId.HasValue)
-            {
-                ViewBag.CourseId = new SelectList(
-                    await _context.Courses.Where(c => c.DepartmentId == selectedDepartmentId).ToListAsync(),
-                    "Id",
-                    "CourseName");
-            }
-            else
-            {
-                ViewBag.CourseId = new SelectList(new List<Course>(), "Id", "CourseName");
-            }
-        }
+           
     }
 }
 

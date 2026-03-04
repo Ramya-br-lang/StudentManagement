@@ -10,7 +10,6 @@
         <tr>
             <th>Name</th>
             <th>Email</th>
-            <th>Designation</th>
             <th>Department</th>
             <th style="width:300px">Actions</th>
         </tr>
@@ -21,7 +20,6 @@
             <tr>
                 <td>@item.Name</td>
                 <td>@item.Email</td>
-                <td>@item.Designation</td>
                 <td>@item.Department?.DepartmentName</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm me-1">Details</a>

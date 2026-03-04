@@ -12,8 +12,8 @@ using StudentManagementSystem.Data;
 namespace StudentManagementSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260304061608_InitialCreateWithProperRel")]
-    partial class InitialCreateWithProperRel
+    [Migration("20260304072918_FixFacultyDepartmentRelation")]
+    partial class FixFacultyDepartmentRelation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,6 +70,60 @@ namespace StudentManagementSystem.Migrations
                     b.ToTable("Departments");
                 });
 
+            modelBuilder.Entity("StudentManagementSystem.Models.Faculty", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Faculties");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.FacultyCourse", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FacultyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("FacultyId", "CourseId")
+                        .IsUnique();
+
+                    b.ToTable("FacultyCourses");
+                });
+
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
                 {
                     b.Property<int>("Id")
@@ -121,18 +175,48 @@ namespace StudentManagementSystem.Migrations
                     b.Navigation("Department");
                 });
 
+            modelBuilder.Entity("StudentManagementSystem.Models.Faculty", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.Department", "Department")
+                        .WithMany("Faculties")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("StudentManagementSystem.Models.FacultyCourse", b =>
+                {
+                    b.HasOne("StudentManagementSystem.Models.Course", "Course")
+                        .WithMany()
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentManagementSystem.Models.Faculty", "Faculty")
+                        .WithMany()
+                        .HasForeignKey("FacultyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Course");
+
+                    b.Navigation("Faculty");
+                });
+
             modelBuilder.Entity("StudentManagementSystem.Models.Student", b =>
                 {
                     b.HasOne("StudentManagementSystem.Models.Course", "Course")
                         .WithMany("Students")
                         .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("StudentManagementSystem.Models.Department", "Department")
-                        .WithMany("Students")
+                        .WithMany()
                         .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Course");
@@ -149,7 +233,7 @@ namespace StudentManagementSystem.Migrations
                 {
                     b.Navigation("Courses");
 
-                    b.Navigation("Students");
+                    b.Navigation("Faculties");
                 });
 #pragma warning restore 612, 618
         }

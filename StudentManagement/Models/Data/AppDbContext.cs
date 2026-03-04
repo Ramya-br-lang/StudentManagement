@@ -25,12 +25,12 @@ namespace StudentManagementSystem.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Faculty -> Department (required)
-            modelBuilder.Entity<Faculty>()
-                .HasOne(f => f.Department)
-                .WithMany(d => d.Faculties)
-                .HasForeignKey(f => f.DepartmentId)
-                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Faculty>()
+      .HasOne(f => f.Department)
+      .WithMany(d => d.Faculties)
+      .HasForeignKey(f => f.DepartmentId)
+      .OnDelete(DeleteBehavior.Restrict);
             // FacultyCourse mapping: unique constraint to prevent duplicates
             modelBuilder.Entity<FacultyCourse>()
                 .HasIndex(fc => new { fc.FacultyId, fc.CourseId })

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StudentManagementSystem.Models
 {
@@ -9,15 +10,16 @@ namespace StudentManagementSystem.Models
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        [EmailAddress]
-        public string? Email { get; set; }
+        [Required, EmailAddress]
+        public string Email { get; set; } = string.Empty;
 
-        public string? Phone { get; set; }
+        [Required, Phone]
+        public string Phone { get; set; } = string.Empty;
 
-        public string? Designation { get; set; }
-
-        // Faculty must belong to a Department
+        [Required]
         public int DepartmentId { get; set; }
+
+        [ForeignKey("DepartmentId")]
         public Department? Department { get; set; }
     }
 }

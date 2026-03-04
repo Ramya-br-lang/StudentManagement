@@ -1,37 +1,30 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using StudentManagementSystem.Models;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace StudentManagementSystem.Models
 {
+
     public class Student
     {
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Name is required")]
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Enter valid email")]
-        public string? EmailId { get; set; }
+        public string EmailId { get; set; }
 
         [Required(ErrorMessage = "Age is required")]
         [Range(18, 60, ErrorMessage = "Age must be between 18 and 60")]
         public int Age { get; set; }
 
-        // Foreign Key
         [Required(ErrorMessage = "Department is required")]
         public int DepartmentId { get; set; }
 
-        [ForeignKey("DepartmentId")]
-        public Department? Department { get; set; }
-
-        // Foreign Key
         [Required(ErrorMessage = "Course is required")]
         public int CourseId { get; set; }
-
-        [ForeignKey("CourseId")]
-        public Course? Course { get; set; }
 
         [Required(ErrorMessage = "Start Date is required")]
         [Display(Name = "Course Start Date")]
@@ -41,7 +34,7 @@ namespace StudentManagementSystem.Models
         [Display(Name = "Course End Date")]
         public DateTime CourseEndDate { get; set; }
 
-        // Navigation properties
+        // Navigation properties (keep only one of each)
         [ForeignKey("DepartmentId")]
         public virtual Department? Department { get; set; }
 
@@ -49,4 +42,3 @@ namespace StudentManagementSystem.Models
         public virtual Course? Course { get; set; }
     }
 }
-

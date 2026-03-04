@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using StudentManagementSystem.Data;
 using StudentManagementSystem.Models;
 using System.Linq;
@@ -22,7 +23,10 @@ namespace StudentManagementSystem.Controllers
 
         public IActionResult Index()
         {
-            var courses = _context.Courses.ToList();
+            var courses = _context.Courses
+                            .Include(c => c.Department)
+                            .ToList();
+
             return View(courses);
         }
 
